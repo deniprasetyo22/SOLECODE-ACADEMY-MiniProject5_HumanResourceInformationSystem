@@ -10,10 +10,10 @@ namespace MiniProject5.Application.Interfaces.IRepositories
 {
     public interface IDepartmentRepository
     {
-        Task<IEnumerable<Department>> GetAllDepartmentsAsync(paginationDto pagination);
+        Task<IEnumerable<Department>> GetAllDepartmentsAsync();
         Task<Department> GetDepartmentByIdAsync(int deptId);
         Task<Department> AddDepartmentAsync(Department department);
-        Task UpdateDepartmentAsync(int deptId, Department department);
+        Task UpdateDepartmentAsync(Department department);
         Task DeleteDepartmentAsync(int deptId);
     }
 }

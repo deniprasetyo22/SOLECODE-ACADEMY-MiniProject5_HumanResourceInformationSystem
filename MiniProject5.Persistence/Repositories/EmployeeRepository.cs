@@ -23,23 +23,18 @@ namespace MiniProject5.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(paginationDto pagination)
+        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
-            var skipNumber = (pagination.pageNumber - 1) * pagination.pageSize;
-            return await _context.Employees
-                .Skip(skipNumber)
-                .Take(pagination.pageSize)
-                .ToListAsync();
+            return await _context.Employees.ToListAsync();
         }
 
         public async Task<Employee> GetEmployeeByIdAsync(int empId)
         {
-            return await _context.Employees.FindAsync(empId);
+            return await _context.Employees.Include(e => e.Dependents).FirstOrDefaultAsync(e => e.Empid == empId);
         }
 
         public async Task<Employee> AddEmployeeAsync(Employee employee)
         {
-            employee.Status = "Active";
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
             return employee;
@@ -123,16 +118,10 @@ namespace MiniProject5.Persistence.Repositories
             await _context.SaveChangesAsync();
         }
 
-
-        public async Task DeactivateEmployeeAsync(int empId, string reason)
+        public async Task DeactivateEmployeeAsync(Employee employee)
         {
-            var employee = await _context.Employees.FindAsync(empId);
-            if (employee != null)
-            {
-                employee.Status = "Not Active";
-                employee.Reason = reason;
-                await _context.SaveChangesAsync();
-            }
+            _context.Employees.Update(employee);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteEmployeeAsync(int empId)
@@ -144,117 +133,6 @@ namespace MiniProject5.Persistence.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<IEnumerable<Employee>> SearchEmployee(searchDto search, paginationDto pagination)
-        {
-            var emp = _context.Employees.AsQueryable();
-
-            if (search.empId.HasValue)
-            {
-                emp = emp.Where(cek => cek.Empid == search.empId.Value);
-            }
-
-            if (!string.IsNullOrEmpty(search.fName))
-            {
-                emp = emp.Where(cek => cek.Fname.ToLower().Contains(search.fName.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.lName))
-            {
-                emp = emp.Where(cek => cek.Lname.ToLower().Contains(search.lName.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.ssn))
-            {
-                emp = emp.Where(cek => cek.Ssn.ToLower().Contains(search.ssn.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.address))
-            {
-                emp = emp.Where(cek => cek.Address.ToLower().Contains(search.address.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.position))
-            {
-                emp = emp.Where(cek => cek.Position.ToLower().Contains(search.position.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.sex))
-            {
-                emp = emp.Where(cek => cek.Sex.ToLower().Contains(search.sex.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search.empType))
-            {
-                emp = emp.Where(cek => cek.Emptype.ToLower().Contains(search.empType.ToLower()));
-            }
-
-            if (search.level.HasValue)
-            {
-                emp = emp.Where(cek => cek.Level == search.level.Value);
-            }
-
-            if (search.deptId.HasValue)
-            {
-                emp = emp.Where(cek => cek.Deptid == search.deptId.Value);
-            }
-
-            if (!string.IsNullOrEmpty(search.status))
-            {
-                emp = emp.Where(cek => cek.Status.ToLower().Contains(search.status.ToLower()));
-            }
-
-            // Apply sorting
-            if (!string.IsNullOrEmpty(pagination.orderBy))
-            {
-                switch (pagination.orderBy.ToLower())
-                {
-                    case "empid":
-                        emp = emp.OrderBy(e => e.Empid);
-                        break;
-                    case "fname":
-                        emp = emp.OrderBy(e => e.Fname);
-                        break;
-                    case "lname":
-                        emp = emp.OrderBy(e => e.Lname);
-                        break;
-                    case "ssn":
-                        emp = emp.OrderBy(e => e.Ssn);
-                        break;
-                    case "address":
-                        emp = emp.OrderBy(e => e.Address);
-                        break;
-                    case "position":
-                        emp = emp.OrderBy(e => e.Position);
-                        break;
-                    case "sex":
-                        emp = emp.OrderBy(e => e.Sex);
-                        break;
-                    case "emptype":
-                        emp = emp.OrderBy(e => e.Emptype);
-                        break;
-                    case "level":
-                        emp = emp.OrderBy(e => e.Level);
-                        break;
-                    case "deptid":
-                        emp = emp.OrderBy(e => e.Deptid);
-                        break;
-                    case "status":
-                        emp = emp.OrderBy(e => e.Status);
-                        break;
-                    default:
-                        throw new ArgumentException($"Invalid order by property: {pagination.orderBy}");
-                }
-            }
-
-            var skipNumber = (pagination.pageNumber - 1) * pagination.pageSize;
-
-            return await emp
-                .Skip(skipNumber)
-                .Take(pagination.pageSize)
-                .ToListAsync();
-        }
-
-
     }
+
 }

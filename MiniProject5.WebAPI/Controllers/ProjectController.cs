@@ -18,42 +18,107 @@ namespace MiniProject5.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetAllProjects([FromQuery] paginationDto pagination)
+        public async Task<ActionResult<object>> GetAllProjects([FromQuery] QueryObjectProject query)
         {
-            var projects = await _projectService.GetAllProjectsAsync(pagination);
-            return Ok(projects);
+            try
+            {
+                var projects = await _projectService.GetAllProjectsAsync(query);
+                return Ok(projects);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching projects.");
+            }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        [HttpGet("NoPages")]
+        public async Task<ActionResult<IEnumerable<Project>>> GetAllProjectsNoPages()
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
-            if (project == null)
+            try
             {
-                return NotFound();
+                var projects = await _projectService.GetAllProjectsNoPagesAsync();
+                return Ok(projects);
             }
-            return Ok(project);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching projects.");
+            }
+        }
+
+        [HttpGet("{projId}")]
+        public async Task<ActionResult<Project>> GetProject(int projId)
+        {
+            try
+            {
+                var project = await _projectService.GetProjectByIdAsync(projId);
+                return Ok(project);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Project with ID {projId} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching the project.");
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Project>> AddProject(Project project)
+        public async Task<ActionResult<Project>> AddProject([FromBody] Project project)
         {
-            var newProject = await _projectService.AddProjectAsync(project);
-            return Ok(newProject);
+            try
+            {
+                var newProject = await _projectService.AddProjectAsync(project);
+                return Ok("Project added successfully.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message); // Conflict if project name already exists
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while adding the project.");
+            }
         }
 
         [HttpPut("{projId}")]
-        public async Task<IActionResult> UpdateProject(int projId,[FromBody] Project project)
+        public async Task<IActionResult> UpdateProject(int projId, [FromBody] Project project)
         {
-            await _projectService.UpdateProjectAsync(projId, project);
-            return Ok();
+            try
+            {
+                await _projectService.UpdateProjectAsync(projId, project);
+                return Ok("Project updated successfilly.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Project with ID {projId} not found.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message); // Conflict if project name already exists
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the project.");
+            }
         }
 
         [HttpDelete("{projId}")]
         public async Task<IActionResult> DeleteProject(int projId)
         {
-            await _projectService.DeleteProjectAsync(projId);
-            return Ok();
+            try
+            {
+                await _projectService.DeleteProjectAsync(projId);
+                return Ok("Project deleted successfully.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Project with ID {projId} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the project.");
+            }
         }
     }
 }

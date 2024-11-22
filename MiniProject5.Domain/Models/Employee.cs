@@ -92,7 +92,6 @@ public partial class Employee
     public virtual ICollection<Department>? Departments { get; set; }
 
     [InverseProperty("Emp")]
-    [JsonIgnore]
     public virtual ICollection<Dependent>? Dependents { get; set; } = new List<Dependent>();
 
     [ForeignKey("Deptid")]

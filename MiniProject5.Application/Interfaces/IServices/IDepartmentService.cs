@@ -10,10 +10,11 @@ namespace MiniProject5.Application.Interfaces.IServices
 {
     public interface IDepartmentService
     {
-        Task<IEnumerable<Department>> GetAllDepartmentsAsync(paginationDto pagination);
+        Task<IEnumerable<Department>> GetAllDepartmentsNoPagesAsync();
         Task<Department> GetDepartmentByIdAsync(int deptId);
         Task<Department> AddDepartmentAsync(Department department);
         Task UpdateDepartmentAsync(int deptId, Department department);
         Task DeleteDepartmentAsync(int deptId);
+        Task<object> GetAllDepartmentsAsync(QueryObjectDepartment query);
     }
 }

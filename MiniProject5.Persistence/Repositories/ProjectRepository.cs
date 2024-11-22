@@ -20,13 +20,52 @@ namespace MiniProject5.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Project>> GetAllProjectsAsync(paginationDto pagination)
+        //public async Task<IEnumerable<Project>> GetAllProjectsAsync(paginationDto pagination)
+        //{
+        //    var skipNumber = (pagination.pageNumber - 1) * pagination.pageSize;
+        //    return await _context.Projects
+        //        .Skip(skipNumber)
+        //        .Take(pagination.pageSize)
+        //        .ToListAsync();
+        //}
+
+        //public async Task<Project> GetProjectByIdAsync(int projId)
+        //{
+        //    return await _context.Projects.FindAsync(projId);
+        //}
+
+        //public async Task<Project> AddProjectAsync(Project project)
+        //{
+        //    _context.Projects.Add(project);
+        //    await _context.SaveChangesAsync();
+        //    return project;
+        //}
+
+        //public async Task UpdateProjectAsync(int projId, Project project)
+        //{
+        //    var existingProj = await _context.Projects.FirstOrDefaultAsync(cek => cek.Projid == projId);
+        //    if (existingProj != null)
+        //    {
+        //        existingProj.Projname = project.Projname;
+        //        existingProj.Deptid = project.Deptid;
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
+
+        //public async Task DeleteProjectAsync(int projId)
+        //{
+        //    var project = await _context.Projects.FindAsync(projId);
+        //    if (project != null)
+        //    {
+        //        _context.Projects.Remove(project);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
+
+
+        public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            var skipNumber = (pagination.pageNumber - 1) * pagination.pageSize;
-            return await _context.Projects
-                .Skip(skipNumber)
-                .Take(pagination.pageSize)
-                .ToListAsync();
+            return await _context.Projects.ToListAsync();
         }
 
         public async Task<Project> GetProjectByIdAsync(int projId)
@@ -41,15 +80,10 @@ namespace MiniProject5.Persistence.Repositories
             return project;
         }
 
-        public async Task UpdateProjectAsync(int projId, Project project)
+        public async Task UpdateProjectAsync(Project project)
         {
-            var existingProj = await _context.Projects.FirstOrDefaultAsync(cek => cek.Projid == projId);
-            if (existingProj != null)
-            {
-                existingProj.Projname = project.Projname;
-                existingProj.Deptid = project.Deptid;
-                await _context.SaveChangesAsync();
-            }
+            _context.Projects.Update(project);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteProjectAsync(int projId)

@@ -10,7 +10,8 @@ namespace MiniProject5.Application.Interfaces.IServices
 {
     public interface IProjectService
     {
-        Task<IEnumerable<Project>> GetAllProjectsAsync(paginationDto pagination);
+        Task<IEnumerable<Project>> GetAllProjectsNoPagesAsync();
+        Task<object> GetAllProjectsAsync(QueryObjectProject query);
         Task<Project> GetProjectByIdAsync(int projId);
         Task<Project> AddProjectAsync(Project project);
         Task UpdateProjectAsync(int projId, Project project);

@@ -10,12 +10,12 @@ namespace MiniProject5.Application.Interfaces.IRepositories
 {
     public interface IEmployeeRepository
     {
-        Task<IEnumerable<Employee>> GetAllEmployeesAsync(paginationDto pagination);
+        Task<IEnumerable<Employee>> GetAllEmployeesAsync();
         Task<Employee> GetEmployeeByIdAsync(int empId);
         Task<Employee> AddEmployeeAsync(Employee employee);
         Task UpdateEmployeeAsync(int empId, Employee employee);
-        Task DeactivateEmployeeAsync(int empId, string reason);
+        Task DeactivateEmployeeAsync(Employee employee);
         Task DeleteEmployeeAsync(int empId);
-        Task<IEnumerable<Employee>> SearchEmployee(searchDto search, paginationDto pagination);
     }
+
 }

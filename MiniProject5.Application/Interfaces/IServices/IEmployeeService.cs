@@ -10,12 +10,15 @@ namespace MiniProject5.Application.Interfaces.IServices
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<Employee>> GetAllEmployeesAsync(paginationDto pagination);
+        Task<IEnumerable<Employee>> GetAllEmployeesNoPagesAsync();
+        Task<object> GetAllEmployeesAsync(QueryObject query);
         Task<Employee> GetEmployeeByIdAsync(int empId);
         Task<Employee> AddEmployeeAsync(Employee employee);
         Task UpdateEmployeeAsync(int empId, Employee employee);
         Task DeactivateEmployeeAsync(int empId, string reason);
+        Task ActivateEmployeeAsync(int empId);
         Task DeleteEmployeeAsync(int empId);
         Task<IEnumerable<Employee>> SearchEmployee(searchDto search, paginationDto pagination);
     }
+
 }
